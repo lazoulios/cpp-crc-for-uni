@@ -53,7 +53,8 @@ string transmitMessage(const string &message, const string &crc, double ber) { /
     string transmitted_message = message + crc;
     string noisy_message;
     for (char bit : transmitted_message) {
-        if ((double)rand() / RAND_MAX < ber) {
+        double random = (double)rand() / RAND_MAX;
+        if (random <= ber) {
             noisy_message += (bit == '1') ? '0' : '1';
         } else {
             noisy_message += bit;
@@ -72,8 +73,8 @@ int main() {
     int k = rand() % 15; //creation of random k vat for message length. upper bound 15 for simplicity, works without too.
     string P;
     cout << "Δώστε δυαδικό αριθμό για πρότυπο υπολογισμού του CRC:" << endl;
-    cin >> P; //
-    double BER = 10^-3; 
+    cin >> P; //the divisor used for the CRC
+    double BER = 0.001;
 
     string message = generateMessage(k); //generating the random message with max length k
     cout << "Αρχικό μήνυμα: " << message << endl;
@@ -86,6 +87,6 @@ int main() {
 
     bool is_valid = checkCRC(noisy_message, P); //checking if the message is valid
     cout << "Το μήνυμα είναι " << (is_valid ? "έγκυρο" : "μη έγκυρο") << endl;
-
+    
     return 0;
 }
